@@ -1,0 +1,45 @@
+#Data pre-processing
+# Looking for null and duplicate values
+
+import pandas as pd
+
+df = pd.read_excel('/content/Malaria deaths, number, estimate.xlsx') 
+print(f"Null values per column: {df.isnull().sum()}")
+print(f"Total duplicated rows: {df.duplicated().sum()}")
+
+data = pd.read_excel('/content/Number of confirmed malaria cases.xlsx') 
+print(f"Null values per column: {data.isnull().sum()}")
+print(f"Total duplicated rows: {data.duplicated().sum()}")
+
+file = pd.read_excel('/content/Number of malaria cases treated with any first  line tx courses (including artemisinin-based combination therapies (ACTs)).xlsx') 
+print(f"Null values per column: {file.isnull().sum()}")
+print(f"Total duplicated rows: {file.duplicated().sum()}")
+
+
+# Merging the datasets together
+
+data1 = pd.read_excel('/content/Number of confirmed malaria cases.xlsx')
+data2 = pd.read_excel('/content/Malaria deaths, number, estimate.xlsx')
+data3 = pd.read_excel('/content/Number of malaria cases treated with any first  line tx courses (including artemisinin-based combination therapies (ACTs)).xlsx')
+
+merged_data = pd.merge(data1, data2, on=['Continent', 'Country', 'Year'], how='left')
+
+merged_data = pd.merge(merged_data, data3, on=['Continent', 'Country', 'Year'], how='left')
+
+print(merged_data.head())
+
+# Looking for any null or duplicates in merged dataset
+
+print(f"Null values per column: {merged_data.isnull().sum()}")
+print(f"Total duplicated rows: {merged_data.duplicated().sum()}")
+
+# Droping null values in Deaths column and replace null values with 0 in Treated cases column
+
+cleaned_data = merged_data.dropna(subset=['Deaths'])
+cleaned_data['Treated_cases'] = cleaned_data['Treated_cases'].fillna(0)
+
+print(cleaned_data.head())
+
+# Saving the new merged dataset as excel
+
+cleaned_data.to_excel("Malaria Merged Dataset.xlsx", index=False)
