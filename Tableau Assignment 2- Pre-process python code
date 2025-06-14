@@ -1,0 +1,15 @@
+import pandas as pd
+# Connected the dataset to Coolab
+
+df = pd.read_csv('/content/web_marketing_data.csv')
+
+# Summed up if any null values and duplicates
+print(f'Null Values per column: {df.isnull().sum()}')
+print(f'Duplicate rows: {df.duplicated().sum()}')
+
+# Found null values, replace it with 'Others'
+df['Campaign'] = df['Campaign'].fillna('Others')
+
+# Saved the file as Excel
+df.to_excel('Website Marketing Dataset.xlsx', index=False)
+
